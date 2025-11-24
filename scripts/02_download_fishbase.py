@@ -105,6 +105,18 @@ class FishBaseDownloader:
         species_dir = self.output_dir / code
         species_dir.mkdir(parents=True, exist_ok=True)
 
+        # Check if data already exists
+        metadata_file = self.metadata_dir / f'fishbase_{code}.csv'
+        existing_images = list(species_dir.glob('*.jpg'))
+
+        if metadata_file.exists() and len(existing_images) >= target:
+            logger.info(f"✓ Already have {len(existing_images)} images for {common_name} (target: {target})")
+            logger.info(f"  Skipping download. Delete {species_dir} to re-download.")
+            # Load and return existing metadata
+            return pd.read_csv(metadata_file)
+        elif len(existing_images) > 0:
+            logger.info(f"Found {len(existing_images)} existing images, need {target - len(existing_images)} more")
+
         # Get image URLs
         image_urls = self.get_species_images(scientific_name)
         logger.info(f"Found {len(image_urls)} images on FishBase")

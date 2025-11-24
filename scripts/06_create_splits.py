@@ -50,6 +50,23 @@ class DatasetSplitter:
             logger.warning(f"Directory not found: {source_dir}")
             return
 
+        # Check if splits already exist
+        category = self.get_species_category(species_code)
+        train_dir = self.output_dir / 'train' / category / species_code
+        val_dir = self.output_dir / 'val' / category / species_code
+        test_dir = self.output_dir / 'test' / category / species_code
+
+        if train_dir.exists() and val_dir.exists() and test_dir.exists():
+            train_count = len(list(train_dir.glob('*.jpg')))
+            val_count = len(list(val_dir.glob('*.jpg')))
+            test_count = len(list(test_dir.glob('*.jpg')))
+            total = train_count + val_count + test_count
+
+            if total > 0:
+                logger.info(f"✓ Splits already exist: Train={train_count}, Val={val_count}, Test={test_count}")
+                logger.info(f"  Skipping. Delete data/processed/train,val,test to recreate.")
+                return
+
         # Get all images
         images = list(source_dir.glob('*.jpg'))
         if not images:

@@ -23,24 +23,28 @@ echo ""
 echo "======================================"
 echo "Step 1: Download from iNaturalist"
 echo "======================================"
+echo "Note: Will skip species with existing data"
 python scripts/01_download_inaturalist.py
 
 echo ""
 echo "======================================"
 echo "Step 2: Download from FishBase (rare species)"
 echo "======================================"
+echo "Note: Will skip species with existing data"
 python scripts/02_download_fishbase.py
 
 echo ""
 echo "======================================"
 echo "Step 3: Preprocess all images"
 echo "======================================"
+echo "Note: Will skip already processed images"
 python scripts/05_preprocess.py
 
 echo ""
 echo "======================================"
 echo "Step 4: Create train/val/test splits"
 echo "======================================"
+echo "Note: Will skip if splits already exist"
 python scripts/06_create_splits.py
 
 echo ""

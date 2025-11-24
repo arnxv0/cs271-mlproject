@@ -49,6 +49,13 @@ class DatasetPreprocessor:
         output_dir = self.processed_dir / species_code
         output_dir.mkdir(parents=True, exist_ok=True)
 
+        # Check if already processed
+        existing_images = list(output_dir.glob('*.jpg'))
+        if len(existing_images) > 0:
+            logger.info(f"✓ Already processed: {len(existing_images)} images found")
+            logger.info(f"  Skipping merge. Delete {output_dir} to reprocess.")
+            return len(existing_images)
+
         # Sources to check
         sources = [
             ('inaturalist', self.raw_dir / 'inaturalist' / species_code),

@@ -54,6 +54,19 @@ class iNaturalistDownloader:
         species_dir = self.output_dir / code
         species_dir.mkdir(parents=True, exist_ok=True)
 
+        # Check if data already exists
+        metadata_file = self.metadata_dir / f'inaturalist_{code}.csv'
+        existing_images = list(species_dir.glob('*.jpg'))
+
+        if metadata_file.exists() and len(existing_images) >= target:
+            logger.info(f"✓ Already have {len(existing_images)} images for {common_name} (target: {target})")
+            logger.info(f"  Skipping download. Delete {species_dir} to re-download.")
+            # Load and return existing metadata
+            return pd.read_csv(metadata_file)
+        elif len(existing_images) > 0:
+            logger.info(f"Found {len(existing_images)} existing images, need {target - len(existing_images)} more")
+            # Continue to download more images
+
         # Get observations from iNaturalist
         try:
             observations = get_observations(
